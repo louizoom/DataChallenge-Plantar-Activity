@@ -1,0 +1,26 @@
+⏳ Chargement des 32 sujets...
+
+🚀 Benchmarking MLP_Simple (5-Fold CV)...
+  Pli 1: Acc = 41.34%
+  Pli 2: Acc = 44.51%
+  Pli 3: Acc = 41.60%
+  Pli 4: Acc = 38.94%
+  Pli 5: Acc = 44.34%
+
+🚀 Benchmarking CNN1D_Simple (5-Fold CV)...
+  Pli 1: Acc = 42.57%
+  Pli 2: Acc = 44.47%
+  Pli 3: Acc = 43.22%
+  Pli 4: Acc = 40.40%
+  Pli 5: Acc = 45.85%
+
+🚀 Benchmarking ResBiLSTM (5-Fold CV)...
+  Pli 1: Acc = 45.64%
+  Pli 2: Acc = 48.23%
+  Pli 3: Acc = 46.11%
+  Pli 4: Acc = 43.64%
+  Pli 5: Acc = 48.83%
+
+🌲 Benchmarking Random Forest (5-Fold CV)...
+
+✅ Benchmark terminé ! Résultats sauvegardés.

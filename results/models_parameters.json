@@ -1,0 +1,102 @@
+{
+    "Random Forest (Baseline)": {
+        "Type": "Machine Learning (Ensemble)",
+        "Architecture": "Forêt Aléatoire de décision temporelle décorrélée",
+        "Window_Size": 1,
+        "Epochs": "N/A",
+        "Hyperparameters": {
+            "n_estimators": 50,
+            "max_depth": 15
+        },
+        "Estimated_Parameters": "N/A (Algorithmique non paramétrique)",
+        "Strengths": "Très rapide à entraîner, peu de prétraitement requis.",
+        "Weaknesses": "Aucune conscience temporelle (évalue image par image), sujet au data leakage s'il n'est pas bien géré."
+    },
+    "CNN 1D (Simple)": {
+        "Type": "Deep Learning (Convolutif)",
+        "Architecture": "2x Conv1D (64, 128) + MaxPool1D + Dense(128)",
+        "Window_Size": [20, 60],
+        "Epochs": 4,
+        "Hyperparameters": {
+            "kernel_size": 3,
+            "dropout": 0.5,
+            "optimizer": "Adam (lr=0.001)"
+        },
+        "Estimated_Parameters": "~150k - 400k (Dépendant de la fenêtre d'entrée)",
+        "Strengths": "Extraction locale de features spatiales.",
+        "Weaknesses": "Trop peu profond pour modéliser des mouvements longs de 31 classes."
+    },
+    "MLP Dense (Simple)": {
+        "Type": "Deep Learning (Feed-Forward)",
+        "Architecture": "Flatten + Dense(256) + Dense(128)",
+        "Window_Size": 50,
+        "Epochs": 4,
+        "Hyperparameters": {
+            "dropout": 0.5,
+            "optimizer": "Adam (lr=0.001)"
+        },
+        "Estimated_Parameters": "~670,000",
+        "Strengths": "Topologie simple pour l'analyse brute.",
+        "Weaknesses": "Explosion des paramètres, forte probabilité d'overfitting, pas d'invariance par translation."
+    },
+    "Conv-LSTM": {
+        "Type": "Deep Learning (Spatio-Temporel)",
+        "Architecture": "Conv1D(64, 128) -> LSTM(128, bidirectional) -> Dense(128)",
+        "Window_Size": 50,
+        "Epochs": 35,
+        "Hyperparameters": {
+            "batch_size": 256,
+            "lstm_layers": 1,
+            "optimizer": "Adam"
+        },
+        "Estimated_Parameters": "~850,000",
+        "Strengths": "Excellent compromis entre extraction spatiale et suivi temporel séquentiel.",
+        "Weaknesses": "Lent à entraîner, LSTM parfois instable sur les longues séquences."
+    },
+    "ResBiLSTM": {
+        "Type": "Deep Learning (Hybride Résiduel + Récurrent)",
+        "Architecture": "ResBlocks 1D successifs + BiLSTM + Dense",
+        "Window_Size": 50,
+        "Epochs": 40,
+        "Hyperparameters": {
+            "batch_size": 256,
+            "stride": 2,
+            "optimizer": "Adam"
+        },
+        "Estimated_Parameters": "~1.5 à 2.5 Millions",
+        "Strengths": "Flux de gradients préservé (ResNet) combiné à l'analyse temporelle bidirectionnelle.",
+        "Weaknesses": "Commence à devenir un modèle lourd pour un usage en temps réel embarqué."
+    },
+    "SE-Res-BiLSTM (Ultimate)": {
+        "Type": "Deep Learning (Avancé avec Attention)",
+        "Architecture": "Squeeze-and-Excitation + ResNet + BiLSTM",
+        "Window_Size": 50,
+        "Epochs": 70,
+        "Hyperparameters": {
+            "batch_size": 256,
+            "cosine_annealing": true,
+            "scheduler_patience": "Cosine",
+            "optimizer": "Adam"
+        },
+        "Estimated_Parameters": "~3.5 Millions",
+        "Strengths": "Recalibrage des features via SE (Attention spatiale) pour un meilleur filtrage du bruit.",
+        "Weaknesses": "Temps d'entraînement maximal, architecture complexe à déboguer."
+    },
+    "DeepResNet-10L (Champion)": {
+        "Type": "Deep Learning (Purement Convolutif Profond)",
+        "Architecture": "4x ResBlocks (64->128->256->512) + Global Average Pooling + Classification Dense",
+        "Window_Size": 50,
+        "Epochs": 50,
+        "Hyperparameters": {
+            "batch_size": 256,
+            "learning_rate": 0.0005,
+            "weight_decay": 0.0001,
+            "gradient_clipping": 1.0,
+            "dropout": 0.4,
+            "class_weights": "Balanced"
+        },
+        "Estimated_Parameters": "~2.1 Millions",
+        "Strengths": "Extrêmement robuste grâce au GAP et aux 10 couches convolutives. Paramètres d'apprentissage très optimisés (Learning Rate Scheduler sur plateau).",
+        "Weaknesses": "Difficile d'expliquer ce que le modèle « regarde » précisément (Black Box due à la profondeur)."
+    }
+}

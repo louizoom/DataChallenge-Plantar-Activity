@@ -1,0 +1,43 @@
+🚀 Ascension Finale ! Chargement S01 à S08...
+🎯 Fenêtrage Prêt. Matrices: X=(188863, 50, 50) / Num Classes=31
+💡 Armure DL Activée : Poids Imbalance & Early Stopping & ResNet-BiLSTM
+[E01/40] Loss(W): 2.454 | T-Acc: 33.88% | Val Loss: 2.147 | V-Acc: 43.48% 👑
+[E02/40] Loss(W): 2.152 | T-Acc: 43.51% | Val Loss: 1.990 | V-Acc: 47.07% 👑
+[E03/40] Loss(W): 2.058 | T-Acc: 45.96% | Val Loss: 1.938 | V-Acc: 47.63% 👑
+[E04/40] Loss(W): 1.996 | T-Acc: 47.50% | Val Loss: 1.875 | V-Acc: 49.45% 👑
+[E05/40] Loss(W): 1.944 | T-Acc: 48.80% | Val Loss: 1.850 | V-Acc: 50.12% 👑
+[E06/40] Loss(W): 1.902 | T-Acc: 49.72% | Val Loss: 1.805 | V-Acc: 50.90% 👑
+[E07/40] Loss(W): 1.860 | T-Acc: 50.56% | Val Loss: 1.774 | V-Acc: 51.60% 👑
+[E08/40] Loss(W): 1.827 | T-Acc: 51.32% | Val Loss: 1.747 | V-Acc: 52.49% 👑
+[E09/40] Loss(W): 1.796 | T-Acc: 52.07% | Val Loss: 1.735 | V-Acc: 52.38% 
+[E10/40] Loss(W): 1.765 | T-Acc: 52.71% | Val Loss: 1.714 | V-Acc: 53.55% 👑
+[E11/40] Loss(W): 1.740 | T-Acc: 53.29% | Val Loss: 1.706 | V-Acc: 53.33% 
+[E12/40] Loss(W): 1.712 | T-Acc: 53.89% | Val Loss: 1.700 | V-Acc: 54.08% 👑
+[E13/40] Loss(W): 1.691 | T-Acc: 54.42% | Val Loss: 1.685 | V-Acc: 54.64% 👑
+[E14/40] Loss(W): 1.662 | T-Acc: 55.05% | Val Loss: 1.682 | V-Acc: 54.61% 
+[E15/40] Loss(W): 1.640 | T-Acc: 55.47% | Val Loss: 1.655 | V-Acc: 54.62% 
+[E16/40] Loss(W): 1.619 | T-Acc: 55.88% | Val Loss: 1.664 | V-Acc: 54.51% 
+[E17/40] Loss(W): 1.535 | T-Acc: 57.95% | Val Loss: 1.605 | V-Acc: 56.69% 👑
+[E18/40] Loss(W): 1.500 | T-Acc: 58.79% | Val Loss: 1.604 | V-Acc: 56.84% 👑
+[E19/40] Loss(W): 1.477 | T-Acc: 59.27% | Val Loss: 1.596 | V-Acc: 57.12% 👑
+[E20/40] Loss(W): 1.456 | T-Acc: 59.80% | Val Loss: 1.593 | V-Acc: 57.29% 👑
+[E21/40] Loss(W): 1.434 | T-Acc: 60.23% | Val Loss: 1.598 | V-Acc: 57.20% 
+[E22/40] Loss(W): 1.418 | T-Acc: 60.44% | Val Loss: 1.598 | V-Acc: 57.46% 👑
+[E23/40] Loss(W): 1.405 | T-Acc: 60.96% | Val Loss: 1.592 | V-Acc: 57.83% 👑
+[E24/40] Loss(W): 1.385 | T-Acc: 61.33% | Val Loss: 1.583 | V-Acc: 57.96% 👑
+[E25/40] Loss(W): 1.376 | T-Acc: 61.66% | Val Loss: 1.587 | V-Acc: 58.03% 👑
+[E26/40] Loss(W): 1.358 | T-Acc: 62.05% | Val Loss: 1.596 | V-Acc: 58.16% 👑
+[E27/40] Loss(W): 1.345 | T-Acc: 62.31% | Val Loss: 1.593 | V-Acc: 58.33% 👑
+[E28/40] Loss(W): 1.333 | T-Acc: 62.62% | Val Loss: 1.602 | V-Acc: 58.48% 👑
+[E29/40] Loss(W): 1.317 | T-Acc: 62.85% | Val Loss: 1.608 | V-Acc: 58.50% 👑
+[E30/40] Loss(W): 1.304 | T-Acc: 63.36% | Val Loss: 1.601 | V-Acc: 58.76% 👑
+[E31/40] Loss(W): 1.295 | T-Acc: 63.57% | Val Loss: 1.596 | V-Acc: 58.68% 
+[E32/40] Loss(W): 1.286 | T-Acc: 63.73% | Val Loss: 1.613 | V-Acc: 58.73% 
+[E33/40] Loss(W): 1.273 | T-Acc: 64.16% | Val Loss: 1.612 | V-Acc: 58.80% 👑
+[E34/40] Loss(W): 1.262 | T-Acc: 64.38% | Val Loss: 1.613 | V-Acc: 58.77% 
+[E35/40] Loss(W): 1.252 | T-Acc: 64.54% | Val Loss: 1.620 | V-Acc: 58.93% 👑
+[E36/40] Loss(W): 1.240 | T-Acc: 64.92% | Val Loss: 1.618 | V-Acc: 59.29% 👑
+🛑 Early Stopping déclenché. Le modèle stagne, arrêt pour éviter l'Overfitting.
+
+🔮 EXÉCUTION TERMINÉE ! (T = 1085.2 s)
+📊 Accuracy Absolue : 59.29% (Réseau Imbalance-Proof)

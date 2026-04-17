@@ -1,0 +1,33 @@
+Name;Class;Frame Start;Timestamp Start;Frame End;Timestamp End
+Standing in T-pose;1.0;384.0;3.19167;968.0;8.05833
+Jumping on the left leg;16.0;968.0;8.05833;1486.0;12.375
+Side-stepping;13.0;1486.0;12.375;2000.0;16.65833
+Climbing the stairs;21.0;2000.0;16.65833;2883.0;24.01667
+Balancing on the left leg ;3.0;2883.0;24.01667;3190.0;26.575
+Jumping backward;19.0;3190.0;26.575;3738.0;31.14167
+Leaning backward;27.0;3738.0;31.14167;4260.0;35.49167
+Walking backwards;10.0;4260.0;35.49167;4821.0;40.16667
+Pulling the bag;24.0;4821.0;40.16667;5239.0;43.65
+Standing upright without moving;2.0;5239.0;43.65;6058.0;50.475
+Jumping on the left leg;16.0;6058.0;50.475;6406.0;53.375
+Looking backward;29.0;6406.0;53.375;7018.0;58.475
+Hopping around on one leg;12.0;7018.0;58.475;7462.0;62.175
+Lifting the bag with one hand;22.0;7462.0;62.175;8414.0;70.10833
+Standing on tiptoes;6.0;8414.0;70.10833;8790.0;73.24167
+Jumping in place;14.0;8790.0;73.24167;9277.0;77.3
+Leaning to the side;28.0;9277.0;77.3;9852.0;82.09167
+Walking on tiptoes;11.0;9852.0;82.09167;10414.0;86.775
+Lifting the bag with two hands;23.0;10414.0;86.775;11096.0;92.45833
+Standing on heels;7.0;11096.0;92.45833;11644.0;97.025
+Balancing on the right leg ;4.0;11644.0;97.025;12104.0;100.85833
+Putting right hand on the ground;31.0;12104.0;100.85833;12559.0;104.65
+Walking;8.0;12559.0;104.65;13234.0;110.275
+Sitting on the stool;20.0;13234.0;110.275;13895.0;115.78333
+Doing squats;5.0;13895.0;115.78333;14301.0;119.16667
+Jumping to the side;17.0;14301.0;119.16667;14779.0;123.15
+Putting left hand on the ground;30.0;14779.0;123.15;15234.0;126.94167
+Jogging;9.0;15234.0;126.94167;15870.0;132.24167
+Pulling the bag;24.0;15870.0;132.24167;16531.0;137.75
+Jumping forward;18.0;16531.0;137.75;17039.0;141.98333
+Leaning forward;26.0;17039.0;141.98333;17508.0;145.89167
+Standing in T-pose;1.0;17508.0;145.89167;17818.0;148.47765
