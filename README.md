@@ -38,18 +38,24 @@ This project was developed as part of a Data Science challenge. The goal is to c
 ## Repository Structure
 
 ```
-entrainnementIA/
+DataChallenge-Plantar-Activity/
 │
 ├── src/                          # Training & benchmark scripts
-│   ├── train_dl.py               # Naive CNN 1D (S01–S02, 4 epochs)
-│   ├── train_model.py            # Random Forest baseline (S01–S05)
-│   ├── train_optimised.py        # Conv-LSTM (S01–S05, 35 epochs)
-│   ├── train_master.py           # ResBiLSTM (all 32 subjects, 40 epochs)
-│   ├── train_deep_10L.py         # ⭐ DeepResNet-10L — Champion (50 epochs)
-│   ├── train_ultimate_model.py   # SE-ResBiLSTM Ultime (70 epochs)
-│   ├── train_kfold.py            # 10-Fold GroupKFold — ResBiLSTM
-│   ├── benchmark_kfold.py        # 5-Fold GroupKFold — multi-model comparison
-│   └── experiment_runner.py      # Quick 4-epoch baseline benchmark (S01–S02)
+│   ├── models/                   # Pure PyTorch architectures
+│   │   ├── baselines.py          # CNN1D, MLP
+│   │   ├── blocks.py             # ResBlocks
+│   │   ├── resnet10_1d.py        # ⭐ DeepResNet-10L (Champion)
+│   │   └── ...                   # resnet_bilstm.py, convlstm.py, etc.
+│   │
+│   ├── training/                 # Model-specific training wrappers
+│   │   ├── train_resnet10_1d.py
+│   │   ├── train_resnet_bilstm.py
+│   │   └── ...                   # train_cnn1d_baseline.py, etc.
+│   │
+│   └── evaluation/               # Cross-validation & benchmarks
+│       ├── train_kfold.py
+│       ├── benchmark_kfold.py
+│       └── experiment_runner.py
 │
 ├── utils/                        # Shared data loading & path utilities
 │   ├── __init__.py
@@ -60,10 +66,9 @@ entrainnementIA/
 │   └── generate_charts.py        # Generate comparison and learning-curve charts
 │
 ├── docs/                         # Project documentation
-│   ├── pecha_kucha_script.md
-│   ├── theorie_et_modeles.md
-│   ├── experiment_results.md
-│   └── meilleur_modele_deepresnet10L.md
+│   ├── champion_model_resnet10_1d.md
+│   ├── theoretical_background.md
+│   └── baseline_experiments.md
 │
 ├── models/                       # Saved model checkpoints (git-ignored)
 ├── results/                      # Training logs, JSON results, charts (git-ignored)
@@ -126,7 +131,7 @@ EVENTS_FOLDER=Events
 ### 2. Run the champion model
 
 ```bash
-python src/train_deep_10L.py
+python src/training/train_resnet10_1d.py
 ```
 
 Expected output: training loop reaching **~78 %** validation accuracy over 50 epochs.
@@ -134,7 +139,7 @@ Expected output: training loop reaching **~78 %** validation accuracy over 50 ep
 ### 3. Run the multi-model benchmark (Group K-Fold)
 
 ```bash
-python src/benchmark_kfold.py
+python src/evaluation/benchmark_kfold.py
 ```
 
 Results are saved to `results/kfold_comparison_results.json`.
