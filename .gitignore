@@ -1,0 +1,90 @@
+# ============================================================
+# Python
+# ============================================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+*.pyo
+.Python
+pip-log.txt
+pip-delete-this-directory.txt
+
+# ============================================================
+# Virtual environments
+# ============================================================
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Keep the template — never the actual secrets file
+!.env.example
+
+# ============================================================
+# Data — NEVER commit raw data
+# ============================================================
+DataChallenge_donneesGlobales/
+data/
+*.csv
+
+# ============================================================
+# Trained model checkpoints
+# Use Git LFS if you need to version them.
+# ============================================================
+models/*
+!models/.gitkeep
+
+# ============================================================
+# Results / generated artefacts
+# ============================================================
+results/charts/*
+!results/charts/.gitkeep
+
+results/logs/*
+!results/logs/.gitkeep
+
+results/metrics/*
+!results/metrics/.gitkeep
+
+outputs/*
+!outputs/.gitkeep
+
+# ============================================================
+# Jupyter Notebooks
+# ============================================================
+.ipynb_checkpoints/
+*.ipynb
+
+# ============================================================
+# macOS
+# ============================================================
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# ============================================================
+# IDEs & editors
+# ============================================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ============================================================
+# Logs & temporary files
+# ============================================================
+*.log
+*.tmp

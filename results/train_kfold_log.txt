@@ -1,7 +1,0 @@
-🚀 Démarrage du 10-Fold GroupKFold Cross-Validation (32 Sujets)...
-📊 Dataset total : 188374 fenêtres sur 32 sujets.
-
-🌀 ----- PLI 1/10 -----
-  E01 | Val Acc: 42.60% (B: 42.60%)
-  E10 | Val Acc: 47.77% (B: 48.15%)
-  E20 | Val Acc: 47.15% (B: 48.15%)

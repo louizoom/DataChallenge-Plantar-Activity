@@ -1,134 +1,270 @@
-# 🦶 Benchmarking Plantar — Classification de 31 Actions Humaines
+# Plantar Activity Classification — Deep Learning Benchmark
 
-Projet de Deep Learning pour la classification d'activités humaines à partir de capteurs plantaires (insoles + IMU).
-L'objectif est d'atteindre la meilleure précision possible sur 31 classes d'actions à partir des signaux temporels.
+> Classifying **31 human actions** from plantar (insole) pressure and IMU sensor data using a family of PyTorch deep learning architectures.  
+> **Champion model: DeepResNet-10L — 78.23 % validation accuracy** (Group K-Fold, patient-level generalisation).
 
 ---
 
-## 📁 Structure du Projet
+## Table of Contents
+
+1. [Project Overview](#project-overview)
+2. [Repository Structure](#repository-structure)
+3. [Prerequisites & Installation](#prerequisites--installation)
+4. [Quick Start](#quick-start)
+5. [Data Structure](#data-structure)
+6. [Models](#models)
+7. [Results](#results)
+8. [Data Pipeline](#data-pipeline)
+9. [Configuration Reference](#configuration-reference)
+
+---
+
+## Project Overview
+
+This project was developed as part of a Data Science challenge. The goal is to classify 31 distinct human activities (walking, jumping, transitions, etc.) from raw time-series sensor data recorded at **100 FPS** with plantar insoles (50 sensors per foot pair + IMU).
+
+**Key methodological choices:**
+
+| Technique | Rationale |
+|-----------|-----------|
+| Sliding-window segmentation (50 frames / 0.5 s) | Preserves temporal dynamics |
+| `StandardScaler` normalisation | Aligns units (Newton, g, °/s) |
+| **Group K-Fold** cross-validation | Ensures patient-level generalisation — no data leakage |
+| Balanced class weights (`CrossEntropyLoss`) | Prevents majority-class bias (e.g. walking) |
+| Residual connections (ResNet) | Enables very deep networks without vanishing gradient |
+
+---
+
+## Repository Structure
 
 ```
 entrainnementIA/
 │
-├── DataChallenge_donneesGlobales/     # Données brutes (non modifiées)
-│   ├── Plantar_activity_trie/         # ⚠️ NOM RÉEL du dossier insoles par sujet
-│   │   ├── S01/
-│   │   │   ├── Sequence_01/insoles.csv
-│   │   │   └── ...
-│   │   └── S32/
-│   └── Events/                        # Annotations de classification
-│       ├── S01/Sequence_01/classif.csv
+├── src/                          # Training & benchmark scripts
+│   ├── train_dl.py               # Naive CNN 1D (S01–S02, 4 epochs)
+│   ├── train_model.py            # Random Forest baseline (S01–S05)
+│   ├── train_optimised.py        # Conv-LSTM (S01–S05, 35 epochs)
+│   ├── train_master.py           # ResBiLSTM (all 32 subjects, 40 epochs)
+│   ├── train_deep_10L.py         # ⭐ DeepResNet-10L — Champion (50 epochs)
+│   ├── train_ultimate_model.py   # SE-ResBiLSTM Ultime (70 epochs)
+│   ├── train_kfold.py            # 10-Fold GroupKFold — ResBiLSTM
+│   ├── benchmark_kfold.py        # 5-Fold GroupKFold — multi-model comparison
+│   └── experiment_runner.py      # Quick 4-epoch baseline benchmark (S01–S02)
+│
+├── utils/                        # Shared data loading & path utilities
+│   ├── __init__.py
+│   ├── paths.py                  # Env-variable driven path configuration
+│   └── data_utils.py             # Loading, windowing, and cleaning functions
+│
+├── notebooks/
+│   └── generate_charts.py        # Generate comparison and learning-curve charts
+│
+├── docs/                         # Project documentation
+│   ├── pecha_kucha_script.md
+│   ├── theorie_et_modeles.md
+│   ├── experiment_results.md
+│   └── meilleur_modele_deepresnet10L.md
+│
+├── models/                       # Saved model checkpoints (git-ignored)
+├── results/                      # Training logs, JSON results, charts (git-ignored)
+├── outputs/                      # Miscellaneous outputs (git-ignored)
+│
+├── .env.example                  # Environment variable template (copy → .env)
+├── requirements.txt              # Python dependencies
+└── README.md
+```
+
+---
+
+## Prerequisites & Installation
+
+**Python ≥ 3.9** is required.
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/louizoom/DataChallenge-Plantar-Activity.git
+cd DataChallenge-Plantar-Activity
+
+# 2. (Recommended) Create and activate a virtual environment
+python3 -m venv .venv
+source .venv/bin/activate       # macOS / Linux
+# .venv\Scripts\activate        # Windows
+
+# 3. Install dependencies
+pip install -r requirements.txt
+```
+
+> **Apple Silicon (M1/M2/M3):** PyTorch will automatically use the MPS backend for hardware acceleration. No extra configuration is needed.
+
+> **NVIDIA GPU:** Set `CUDA_VISIBLE_DEVICES` as needed; PyTorch detects CUDA automatically.
+
+---
+
+## Quick Start
+
+### 1. Configure your data path
+
+```bash
+cp .env.example .env
+```
+
+Open `.env` and fill in the path to your local data directory:
+
+```ini
+# Absolute path to your data root, or relative to the project root
+DATA_ROOT=/path/to/your/DataChallenge_donneesGlobales
+
+# Sub-folder containing the insole CSV files
+# Sorted dataset  : Plantar_activity_trie
+# Unsorted dataset: Plantar_activity
+PLANTAR_FOLDER=Plantar_activity_trie
+
+# Sub-folder containing the classification annotation files
+EVENTS_FOLDER=Events
+```
+
+### 2. Run the champion model
+
+```bash
+python src/train_deep_10L.py
+```
+
+Expected output: training loop reaching **~78 %** validation accuracy over 50 epochs.
+
+### 3. Run the multi-model benchmark (Group K-Fold)
+
+```bash
+python src/benchmark_kfold.py
+```
+
+Results are saved to `results/kfold_comparison_results.json`.
+
+### 4. Generate charts
+
+```bash
+python notebooks/generate_charts.py
+```
+
+Produces `results/chart_learning_curve.png` and `results/chart_model_comparison.png`.
+
+---
+
+## Data Structure
+
+The project expects the following folder layout inside `DATA_ROOT`:
+
+```
+DATA_ROOT/
+├── PLANTAR_FOLDER/           # e.g. Plantar_activity_trie
+│   ├── S01/
+│   │   ├── Sequence_01/
+│   │   │   └── insoles.csv   # 51 columns: Time + 50 sensor channels (sep=';')
+│   │   └── Sequence_02/
+│   │       └── insoles.csv
+│   └── S32/
 │       └── ...
 │
-├── utils/                             # Module partagé (chemins & prétraitement)
-│   ├── __init__.py
-│   ├── paths.py                       # Config des chemins centralisée
-│   └── data_utils.py                  # Fonctions de chargement et fenêtrage
-│
-├── outputs/                           # Modèles .pth et graphiques sauvegardés
-│
-├── EDA_Plantar.py                     # Analyse Exploratoire des Données (EDA)
-├── EDA_Plantar.ipynb                  # Version notebook de l'EDA
-│
-├── train_model.py                     # 🌲 Baseline : Random Forest (frame-by-frame)
-├── train_dl.py                        # 🧠 CNN 1D simple (S01-S02, 4 epochs)
-├── train_optimised.py                 # ⚡ Conv-LSTM (S01-S05, 35 epochs)
-├── train_master.py                    # 🎓 ResBiLSTM (tous sujets, 40 epochs)
-├── train_ultimate_model.py            # 🚀 SE-Res-BiLSTM (tous sujets, 70 epochs)
-├── train_deep_10L.py                  # 👑 DeepResNet-10L (tous sujets, 50 epochs)
-│
-├── train_kfold.py                     # 🔁 10-Fold GroupKFold (ResBiLSTM)
-├── benchmark_kfold.py                 # 📊 5-Fold CV comparaison multi-modèles
-├── experiment_runner.py               # 🧪 Benchmark rapide RF + CNN + MLP (S01-S02)
-│
-├── generate_charts.py                 # 📈 Génère les courbes d'apprentissage
-├── build_notebook.py                  # 📓 Génère EDA_Plantar.ipynb
-├── check_project.py                   # ✅ Vérifie l'installation et les chemins
-│
-├── meilleur_modele_deepresnet10L.md   # Documentation du meilleur modèle
-├── pecha_kucha_script.md              # Script de présentation
-└── README.md                          # Ce fichier
+└── EVENTS_FOLDER/            # e.g. Events
+    ├── S01/
+    │   ├── Sequence_01/
+    │   │   └── classif.csv   # Columns: Class, Name, Timestamp Start, Timestamp End
+    │   └── Sequence_02/
+    │       └── classif.csv
+    └── S32/
+        └── ...
+```
+
+Scripts automatically discover all available subjects and sequences — **you do not need to modify any source file** when adding new subjects or using a different number of subjects.
+
+---
+
+## Models
+
+| Script | Architecture | Checkpoint | Subjects | Epochs | Validation |
+|--------|-------------|-----------|----------|--------|------------|
+| `training/train_cnn1d_baseline.py` | Naive CNN 1D | *(not saved)* | S01–S02 | 4 | Random 80/20 |
+| `training/train_random_forest.py` | Random Forest | *(not saved)* | S01–S05 | — | Random 80/20 |
+| `training/train_convlstm.py` | ConvLSTM | `convlstm_v1.0.pth` | S01–S05 | 35 | Random 80/20 |
+| `training/train_resnet_bilstm.py` | ResNetBiLSTM | `resnet_bilstm_v1.0.pth` | All 32 | 40 | Random 80/20 |
+| `training/train_resnet10_1d.py` | **ResNet10_1D** ⭐ | `resnet10_1d_v1.0.pth` | All 32 | 50 | Random 80/20 |
+| `training/train_senet_bilstm.py` | SENetBiLSTM | `senet_bilstm_v1.0.pth` | All 32 | 70 | Random 80/20 |
+| `evaluation/train_kfold.py` | ResNetBiLSTM | *(per-fold)* | All 32 | 50/fold | **10-Fold GroupKFold** |
+| `evaluation/benchmark_kfold.py` | MLP / CNN / RF / ResNetBiLSTM | *(per-fold)* | All 32 | 50/fold | **5-Fold GroupKFold** |
+
+### Champion Architecture — ResNet10_1D
+
+```
+Input (B, 50, F)
+    └─→ Conv1d (F→64, k=5) + BN + ReLU + MaxPool     [50 → 25 frames]
+    └─→ ResBlock 1: Conv1d (64→128)                   [25 frames]
+    └─→ ResBlock 2: Conv1d (128→256, stride=2)        [13 frames]
+    └─→ ResBlock 3: Conv1d (256→256)                  [13 frames]
+    └─→ ResBlock 4: Conv1d (256→512)                  [13 frames]
+    └─→ Global Average Pooling                        [(B, 512)]
+    └─→ Dropout(0.4) + Linear (512 → num_classes)
+```
+
+Each `ResBlock` applies two Conv1d layers with a skip connection (identity shortcut + optional downsampling). This prevents the vanishing gradient problem in very deep networks.
+
+---
+
+## Results
+
+All scores below use **Group K-Fold** cross-validation (subject-level splits — no temporal data leakage).
+
+| Model | Val Accuracy | Std | Method | Checkpoint |
+|-------|-------------|-----|--------|------------|
+| Random Forest | 42.4 % | ±2.4 % | 5-Fold GroupKFold | — |
+| MLP Dense | 42.1 % | ±2.1 % | 5-Fold GroupKFold | — |
+| CNN 1D | 43.3 % | ±1.8 % | 5-Fold GroupKFold | — |
+| ResNet-BiLSTM (`resnet_bilstm_v1.0`) | 46.5 % | ±1.9 % | 5-Fold GroupKFold | `resnet_bilstm_v1.0.pth` |
+| SENet-BiLSTM (`senet_bilstm_v1.0`) | 77.3 % | — | Full train/val split | `senet_bilstm_v1.0.pth` |
+| **ResNet10-1D (`resnet10_1d_v1.0`)** ⭐ | **78.2 %** | — | Full train/val split | `resnet10_1d_v1.0.pth` |
+
+> **Note on Random Forest (frame-by-frame, ~80 %):** The experiment runner
+> reports ~80 % accuracy because it uses a random train/test split, causing
+> temporal data leakage (frames from the same second appear in both splits).
+> This score is **not comparable** to the Group K-Fold results.
+
+---
+
+## Data Pipeline
+
+```
+insoles.csv  +  classif.csv
+      │
+      ▼  Temporal alignment (Timestamp Start / End masking)
+  Merged DataFrame  (100 FPS, Class column added)
+      │
+      ▼  Drop unlabelled frames + forward/backward fill NaN
+  Cleaned DataFrame
+      │
+      ▼  StandardScaler (per-feature z-score normalisation)
+  Normalised Features
+      │
+      ▼  Sliding-window segmentation (50 frames, stride=25, majority-vote label)
+  Tensor (N, 50, num_features)
+      │
+      ▼  GroupKFold split by subject ID
+  Train / Validation Folds
+      │
+      ▼  DataLoader (batch_size=128–256, shuffle=True for train)
+  Mini-batches → Model → CrossEntropyLoss (balanced weights) → Adam → Scheduler
+      │
+      ▼
+  Best checkpoint saved to models/
 ```
 
 ---
 
-## 🚀 Démarrage Rapide
+## Configuration Reference
 
-### 1. Vérification de l'installation
+All configurable parameters live in `.env`:
 
-```bash
-python3 check_project.py
-```
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `DATA_ROOT` | `DataChallenge_donneesGlobales` | Path to the data root directory |
+| `PLANTAR_FOLDER` | `Plantar_activity_trie` | Sub-folder with insole CSV files |
+| `EVENTS_FOLDER` | `Events` | Sub-folder with classification CSV files |
 
-### 2. Analyse Exploratoire des Données
-
-```bash
-python3 EDA_Plantar.py
-```
-
-### 3. Entraînement du meilleur modèle (DeepResNet-10L)
-
-```bash
-python3 train_deep_10L.py
-```
-
----
-
-## 📊 Résultats du Benchmark
-
-| Modèle | Accuracy Val | Type |
-|--------|-------------|------|
-| Random Forest (frame-by-frame*) | 80.16% | ML Baseline |
-| CNN 1D (fenêtre 20) | 47.97% | DL naïf |
-| CNN 1D (fenêtre 60) | 47.90% | DL naïf |
-| MLP Dense (fenêtre 50) | 45.83% | DL naïf |
-| Conv-LSTM (35 epochs) | ~61% | DL optimisé |
-| **ResBiLSTM (40 epochs)** | **62.79%** | **DL avancé** |
-| **DeepResNet-10L (50 epochs)** | **~70%+** | **DL champion** |
-
-> *⚠️ Le Random Forest bénéficie d'un data leakage temporel : il voit des frames proches de celles de validation, ce score n'est pas comparable en conditions réelles.*
-
----
-
-## 🗺️ Pipeline de données
-
-```
-insoles.csv  + classif.csv
-      ↓ (alignement temporel)
-  DataFrame fusionné
-      ↓ (nettoyage + StandardScaler)
-  Features normalisées
-      ↓ (fenêtrage glissant 50 frames / 0.5s)
-  Tenseurs (N, 50, F)
-      ↓ (DataLoader PyTorch)
-  Entraînement du modèle
-      ↓ (Early Stopping / Scheduler)
-  Modèle .pth sauvegardé
-```
-
----
-
-## ⚙️ Détail des Modèles
-
-### DeepResNet-10L (`train_deep_10L.py`) — Meilleur modèle
-- 4 blocs résiduels (ResBlock1D) + Conv d'entrée + GAP + FC
-- Entraîné sur les 32 sujets, 50 epochs
-- `ReduceLROnPlateau`, gradient clipping, class weights balanced
-- Sauvegarde : `deep_resnet_10L_model.pth`
-
-### SE-ResBiLSTM (`train_ultimate_model.py`) — Architecture Ultime
-- Squeeze-and-Excitation + ResNet + BiLSTM
-- Entraîné sur 32 sujets, 70 epochs avec Cosine Annealing
-- Sauvegarde : `ultimate_model_best.pth`
-
-### ResBiLSTM (`train_master.py`)
-- ResNet 1D léger + BiLSTM bidirectionnel
-- Sauvegarde : `master_model_resbilstm.pth`
-
----
-
-## 🛠️ Dépendances
-
-```bash
-pip install torch numpy pandas scikit-learn matplotlib seaborn nbformat
-```
+If any of these directories are not found at import time, `utils/paths.py` will print a clear warning pointing you to the `.env` file.
